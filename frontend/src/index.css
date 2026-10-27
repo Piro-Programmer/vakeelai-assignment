@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Source Serif 4", "Times New Roman", serif;
+  --color-ink: #0f1b2d;
+  --color-brand: #1e3a8a;
+  --color-brand-soft: #e8eefc;
+  --color-paper: #fbfaf7;
+}
+
+body {
+  @apply bg-slate-100 text-slate-800 font-sans antialiased;
+}
+
+/* Form controls share one look. They are defined once here so components stay readable. */
+.input {
+  @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm outline-none transition
+    focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:bg-slate-100 disabled:text-slate-400;
+}
+.label {
+  @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500;
+}
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition
+    disabled:cursor-not-allowed disabled:opacity-50;
+}
+/* Variants are combined with .btn in markup ("btn btn-primary"); Tailwind v4 can't @apply custom classes. */
+.btn-primary { @apply bg-brand text-white shadow hover:bg-blue-900; }
+.btn-ghost { @apply border border-slate-300 bg-white text-slate-700 hover:bg-slate-50; }
+.card { @apply rounded-2xl border border-slate-200 bg-white shadow-sm; }
+
+/* The draft preview imitates a printed A4 pleading (mirrors backend exporters.py). */
+.doc { @apply bg-paper font-serif text-[15px] leading-7 text-black; }
+.doc p { margin: 0 0 0.5rem; text-align: justify; }
+.doc .court { text-align: center; font-weight: 700; }
+.doc .center { text-align: center; }
+.doc .title { text-align: center; font-weight: 700; text-decoration: underline; margin: 0.9rem 0; }
+.doc .heading { font-weight: 700; text-decoration: underline; margin-top: 0.9rem; }
+.doc .left { text-align: left; }
+.doc .right { text-align: right; }
+.doc .para { text-indent: 2.5rem; }
+.doc .num { padding-left: 2rem; text-indent: -2rem; }
+.doc .sub { padding-left: 4rem; text-indent: -2rem; }
+.doc .space { height: 0.6rem; }
+.doc .rule { border-bottom: 1px solid #000; margin: 0.25rem 0 0.75rem; }
+.doc .pagebreak { border-top: 2px dashed #cbd5e1; margin: 1.5rem -2rem; }

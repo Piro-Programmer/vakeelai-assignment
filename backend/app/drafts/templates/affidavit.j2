@@ -1,0 +1,23 @@
+{# Affidavit: the cause-title block appears only when it is filed in an existing matter. #}
+{% if court_name %}
+@court IN THE COURT OF {{ court_name | upper }}
+{% endif %}
+{% if case_number %}
+@center {{ case_number | upper }}
+{% endif %}
+{% if case_title %}
+@center IN THE MATTER OF: {{ case_title }}
+@space
+{% endif %}
+@title AFFIDAVIT{% if in_support_of %} IN SUPPORT OF {{ in_support_of | upper }}{% endif %}
+@para I, {{ party_line(deponent) }}, do hereby solemnly affirm and declare as under:
+@num That I am {{ deponent_capacity if deponent_capacity else "the deponent herein" }}, and am competent to swear this affidavit.
+{% for s in statements %}
+@num That {{ s | lc_first }}
+{% endfor %}
+@space
+@right DEPONENT
+@title VERIFICATION
+@para Verified at {{ place }} on this {{ date | legal_date }} that the contents of the above affidavit are true and correct to my knowledge and belief, no part of it is false, and nothing material has been concealed therefrom.
+@space
+@right DEPONENT

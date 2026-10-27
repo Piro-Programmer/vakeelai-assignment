@@ -1,0 +1,15 @@
+# Render Blueprint: "New +" -> "Blueprint" -> pick this repo.
+services:
+  - type: web
+    name: vakeelai
+    runtime: docker
+    plan: free
+    # Singapore is the closest Render region to India, which helps latency to
+    # services.ecourts.gov.in (and reduces geo-blocking risk).
+    region: singapore
+    healthCheckPath: /api/health
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: OCR_ATTEMPTS
+        value: "8"

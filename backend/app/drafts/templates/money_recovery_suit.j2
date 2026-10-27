@@ -1,0 +1,64 @@
+{# Plaint: Order VII Rule 1 CPC. Structure follows standard Delhi District Court practice:
+   cause title -> title -> facts -> cause of action -> jurisdiction -> limitation -> valuation -> prayer -> verification. #}
+@court IN THE COURT OF THE {{ court_name | upper }}
+@center {{ court_location | upper }}
+@center {% if is_commercial %}CS (COMM){% else %}CS{% endif %} NO. {{ suit_number }}
+@space
+@heading IN THE MATTER OF:
+{% for p in plaintiffs %}
+@left {{ loop.index }}. {{ party_line(p) }}
+{% endfor %}
+@right ... {{ P }}
+@center VERSUS
+{% for p in defendants %}
+@left {{ loop.index }}. {{ party_line(p) }}
+{% endfor %}
+@right ... {{ D }}
+@space
+@title {% if is_commercial %}COMMERCIAL {% endif %}SUIT FOR RECOVERY OF {{ total_claim | inr }} ({{ total_claim | words | upper }}) ALONG WITH PENDENTE LITE AND FUTURE INTEREST
+@para MOST RESPECTFULLY SHOWETH:
+@heading FACTS OF THE CASE
+@num That the {{ P }} {{ "are" if plaintiffs | length > 1 else "is" }} {{ join_names(plaintiffs | map(attribute="name") | list) }}, and the {{ D }} {{ D_is }} {{ join_names(defendants | map(attribute="name") | list) }}, whose complete particulars are given in the memo of parties.
+{% for f in facts %}
+@num That {{ f | lc_first }}
+{% endfor %}
+@num That a sum of {{ principal_amount | inr }} ({{ principal_amount | words }}) is due from the {{ D }} towards the principal amount, and the {{ D }} {{ D_has }} failed to pay the same despite repeated demands.
+{% if interest_rate %}
+@num That the {{ P }} {{ "are" if plaintiffs | length > 1 else "is" }} entitled to interest @ {{ interest_rate }}% per annum on the said principal amount from {{ interest_from | short_date }} till the date of filing of this suit, i.e. for {{ interest_days }} days, which works out to {{ interest_amount | inr }} ({{ interest_amount | words }}). The total amount due as on the date of filing is thus {{ total_claim | inr }} ({{ total_claim | words }}).
+{% endif %}
+{% if is_commercial %}
+@heading PRE-INSTITUTION MEDIATION
+@num That the present suit is a "commercial dispute" within the meaning of Section 2(1)(c) of the Commercial Courts Act, 2015. {% if mediation_done.startswith("Mediation failed") %}The {{ P }} invoked pre-institution mediation under Section 12A of the said Act, which failed, and the non-starter report is filed herewith.{% else %}The present suit contemplates urgent interim relief, and therefore the requirement of pre-institution mediation under Section 12A of the said Act does not apply.{% endif %}
+{% endif %}
+@heading CAUSE OF ACTION
+@num That the cause of action for filing the present suit first arose on {{ cause_of_action_date | short_date }} when the {{ D }} defaulted in payment, and it further arose on each subsequent date of demand and refusal. The cause of action is continuing and subsisting.
+@heading JURISDICTION
+@num That this Hon'ble Court has territorial jurisdiction to try and entertain the present suit, as {{ jurisdiction_facts }}. The value of the suit is within the pecuniary jurisdiction of this Hon'ble Court.
+@heading LIMITATION
+@num That the present suit is within the period of limitation prescribed under the Limitation Act, 1963, having been filed within three years of the cause of action.
+@heading VALUATION AND COURT FEE
+@num That the suit is valued at {{ total_claim | inr }} for the purposes of court fee and jurisdiction, and the requisite ad valorem court fee has been affixed on the plaint.
+@num That no other suit or proceeding between the parties on the same cause of action is pending before any other court.
+@heading PRAYER
+@para In view of the facts and circumstances stated above, it is most respectfully prayed that this Hon'ble Court may be pleased to:
+@sub pass a decree for recovery of {{ total_claim | inr }} ({{ total_claim | words }}) in favour of the {{ P }} and against the {{ D }}{{ ", jointly and severally" if defendants | length > 1 else "" }};
+{% if pendente_lite_rate %}
+@sub award pendente lite and future interest @ {{ pendente_lite_rate }}% per annum on the decretal amount from the date of filing of the suit till its realisation;
+{% endif %}
+@sub award the costs of the suit in favour of the {{ P }};
+{% for p in additional_prayers %}
+@sub {{ p }};
+{% endfor %}
+@sub pass such other order(s) as this Hon'ble Court may deem fit and proper in the facts and circumstances of the case.
+@space
+@right {{ P | upper }}
+@right Through
+@right {{ advocate_name }}{% if advocate_enrolment %} ({{ advocate_enrolment }}){% endif %}
+@right Counsel for the {{ P }}
+@left Place: {{ place }}
+@left Date: {{ date | short_date }}
+@pagebreak
+@title VERIFICATION
+@para Verified at {{ place }} on this {{ date | legal_date }} that the contents of paragraphs 1 to __LAST_PARA__ of the plaint are true and correct to my knowledge, based on the records maintained in the ordinary course of business, and the contents of the remaining paragraphs are based on legal advice, which I believe to be true. Nothing material has been concealed therefrom.
+@space
+@right {{ P | upper }}

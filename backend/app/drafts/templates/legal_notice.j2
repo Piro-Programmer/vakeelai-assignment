@@ -1,0 +1,50 @@
+{# Legal notice: advocate's letterhead style. Not a court pleading, so no cause title. #}
+@center {{ advocate_name | upper }}
+@center Advocate{% if advocate_enrolment %} | Enrolment No. {{ advocate_enrolment }}{% endif %}
+{% if advocate_address %}
+@center {{ advocate_address }}
+{% endif %}
+{% if advocate_contact %}
+@center {{ advocate_contact }}
+{% endif %}
+@rule
+@left Ref. No.: ________
+@right Date: {{ date | short_date }}
+@space
+@left BY {{ dispatch_mode | upper }}
+@space
+@left To,
+{% for r in recipients %}
+@left {{ loop.index }}. {{ party_line(r) }}
+{% endfor %}
+@space
+@title LEGAL NOTICE
+@left Subject: {{ subject }}
+@space
+@left Sir/Madam,
+@para Under the instructions and on behalf of {{ client }},
+{% for s in senders %}
+{{ party_line(s) }}{{ ";" if not loop.last else "" }}
+{% endfor %}
+(hereinafter referred to as "{{ client }}"), I hereby serve upon {{ you }} the following legal notice:
+{% for f in facts %}
+@num That {{ f | lc_first }}
+{% endfor %}
+{% if amount %}
+@num That as on date, a sum of {{ amount | inr }} ({{ amount | words }}){{ interest_clause }} is legally due and payable by {{ you }} to {{ client }}, which {{ you }} have failed and neglected to pay despite repeated requests and reminders.
+{% endif %}
+@num That {{ you }} are, therefore, hereby called upon to do the following within {{ compliance_days | int }} ({{ compliance_days | num_words }}) days of receipt of this notice:
+{% for d in demands %}
+@sub {{ d }}
+{% endfor %}
+@num That if {{ you }} fail to comply with this notice within the stipulated period, {{ client }} shall be constrained to initiate appropriate civil and/or criminal proceedings against {{ you }} before the competent court/forum, entirely at your risk as to costs and consequences, without any further notice.
+{% if notice_cost %}
+@num That {{ you }} are also liable to pay {{ notice_cost | inr }} ({{ notice_cost | words }}) towards the cost of this notice.
+{% endif %}
+@num That a copy of this notice has been retained in my office for record and further action.
+@space
+@right Yours faithfully,
+@space
+@right ({{ advocate_name }})
+@right Advocate for {{ join_names(senders | map(attribute="name") | list) }}
+@left Place: {{ place }}
