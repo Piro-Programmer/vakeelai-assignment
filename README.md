@@ -12,7 +12,7 @@ Two tools behind one FastAPI + React app:
    APIs). It produces a Legal Notice, a Money Recovery Plaint, a Bail Application or an Affidavit
    from a form, with a live preview and export to **Word (.docx)** and **PDF**.
 
-> **Live app:** _<add Render URL here>_  ·  **API docs:** `<live-url>/docs`
+> **Live app:** https://vakeelai-assignment.vercel.app  ·  **API docs:** https://vakeelai-assignment.vercel.app/api/docs
 
 ---
 
@@ -83,7 +83,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-API docs: http://localhost:8000/docs
+API docs: http://localhost:8000/api/docs
 
 ### Frontend (dev mode, hot reload)
 
@@ -126,11 +126,19 @@ The tests run offline against captured portal responses in `backend/fixtures/`.
 
 ## Deployment
 
-The `Dockerfile` builds the frontend and serves it from FastAPI, so the whole project runs as
-**one service** with one URL and no CORS.
+**Vercel (live deployment).** `vercel.json` declares two services in one project: `backend/`
+(FastAPI, serverless) and `frontend/` (Vite, static). `/api/*` is routed to FastAPI and everything
+else to the frontend, so the browser only ever talks to one domain (no CORS). Functions run in
+**`bom1` (Mumbai)**, close to the eCourts servers, which avoids foreign-IP blocking and keeps
+latency low. A post-build step (`frontend/scripts/spa-routes.mjs`) writes `index.html` copies
+for `/cases` and `/drafts`, so direct visits and refreshes don't 404.
 
-**Render:** New → Blueprint → select this repo (`render.yaml`, region Singapore, free plan).
-Any Docker host works the same way (Railway, Fly.io, Hugging Face Spaces with Docker).
+Steps: import the repo in Vercel → **Import multi-service project** → Deploy.
+
+**Docker / Render (alternative).** The `Dockerfile` builds the frontend and serves it from
+FastAPI as a single long-running service. On Render: New → Blueprint → select this repo
+(`render.yaml`). A long-running server is the better fit for the manual-captcha fallback (see
+Known limitations).
 
 ## API reference
 
@@ -235,9 +243,12 @@ Errors from the scraper use one shape: `{"status":"error","error":"CaptchaError|
 
 ## Known limitations
 
-- **Geo/IP blocking.** eCourts may throttle or block some non-Indian datacenter IPs. The
-  deployment uses Render's Singapore region (closest to India). If the portal blocks the host,
-  set `ECOURTS_PROXY` to an Indian proxy. Run locally, the app works from any Indian connection.
+- **Geo/IP blocking.** eCourts may throttle or block non-Indian datacenter IPs. The Vercel
+  deployment runs in Mumbai, which avoids this. Elsewhere, set `ECOURTS_PROXY` to an Indian proxy.
+- **Manual captcha on serverless.** OCR solves the captcha automatically in nearly all searches.
+  The rare manual fallback parks the portal session in process memory, and serverless instances
+  may not keep that between requests (you'd see "captcha has expired"; searching again usually
+  succeeds through OCR). The Docker/Render deployment doesn't have this limitation.
 - The portal's HTML and anti-bot rules can change without notice. Tests run against captured
   fixtures so regressions are easy to spot, and the request flow is all in one module.
 - Generated drafts are starting points and must be reviewed by an advocate before filing.

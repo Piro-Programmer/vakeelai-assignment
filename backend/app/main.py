@@ -32,6 +32,10 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 app = FastAPI(
     title="VakeelAI - eCourts Scraper & Legal Draft Generator",
     version="1.0.0",
+    # Docs live under /api so they work behind the Vercel rewrite (only /api/* reaches FastAPI).
+    docs_url="/api/docs",
+    redoc_url=None,
+    openapi_url="/api/openapi.json",
     description="Task 1: eCourts district-court case scraper (CNR / case number). "
     "Task 2: rule-based legal draft generator (no LLMs).",
 )
