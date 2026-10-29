@@ -11,3 +11,6 @@ frontend/dist/
 .env
 .DS_Store
 *.log
+
+# personal scratch, not part of the assignment
+py/
